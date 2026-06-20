@@ -1,0 +1,48 @@
+{
+  "personas": [
+    {
+      "name": "Especialista QA",
+      "role": "especialista qa",
+      "primary": true
+    },
+    {
+      "name": "Coordinador de proyectos",
+      "role": "coordinador de proyectos",
+      "primary": true
+    },
+    {
+      "name": "Operador",
+      "role": "operador",
+      "primary": true,
+      "persona": "Operador"
+    },
+    {
+      "name": "Cliente",
+      "role": "cliente",
+      "primary": true,
+      "persona": "Cliente"
+    },
+    {
+      "name": "Supervisor",
+      "role": "supervisor",
+      "primary": false,
+      "persona": "Supervisor"
+    }
+  ],
+  "pains": [
+    { "id": "pagos-parciales-mal-aplicados", "source": "analista-qa.md", "persona": "Especialista QA" },
+    { "id": "cuotas-vencidas-no-priorizadas", "source": "analista-qa.md", "persona": "Especialista QA" },
+    { "id": "pagos-duplicados", "source": "analista-qa.md", "persona": "Especialista QA" },
+    { "id": "saldo-favor-sin-trazabilidad", "source": "analista-qa.md", "persona": "Especialista QA" },
+    { "id": "estado-financiero-inconsistente", "source": "analista-qa.md", "persona": "Especialista QA" },
+    { "id": "reglas-no-documentadas", "source": "analista-qa.md", "persona": "Especialista QA" },
+    { "id": "reclamos-pago-no-reflejado", "source": "coordinador-proyectos.md", "persona": "Coordinador de proyectos" },
+    { "id": "informacion-auditoria-insuficiente", "source": "coordinador-proyectos.md", "persona": "Coordinador de proyectos" },
+    { "id": "impacto-modulos-financieros", "source": "coordinador-proyectos.md", "persona": "Coordinador de proyectos" },
+    { "id": "operador-clic-duplo", "source": "analista-qa.md", "persona": "Operador" },
+    { "id": "operador-concurrencia-mismo-prestamo", "source": "analista-qa.md", "persona": "Operador" },
+    { "id": "cliente-pago-no-reflejado", "source": "coordinador-proyectos.md", "persona": "Cliente" },
+    { "id": "cliente-cuotas-vencidas-pese-a-pago", "source": "coordinador-proyectos.md", "persona": "Cliente" },
+    { "id": "supervisor-procesos-excepcionales", "source": "coordinador-proyectos.md", "persona": "Supervisor" }
+  ]
+}
