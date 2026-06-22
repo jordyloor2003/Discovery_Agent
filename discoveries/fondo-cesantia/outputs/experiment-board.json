@@ -1,0 +1,70 @@
+{
+  "discovery": "fondo-cesantia",
+  "hypotheses": [
+    {
+      "id": "H-01",
+      "assumption": "Si el operador ve el desglose visible de la distribución (cuotas cubiertas, saldos pendientes, saldo a favor) tras registrar el pago, entonces valida la operación a la primera sin tener que revisar manualmente el historial.",
+      "hypothesis": "Creemos que el Operador de pagos dejará de revisar el historial manualmente para validar la distribución de un pago si el sistema le muestra de forma clara y visible cómo se aplicó el dinero, porque hoy su mayor carga cognitiva es reconstruir esa distribución a mano.",
+      "metric": "Tasa de pagos registrados que NO requieren una segunda consulta al historial por parte del operador en los 30 minutos siguientes (proxy directo del outcome: 'lo da por bueno a la primera').",
+      "threshold": "≥ 80% de los pagos registrados en una muestra de al menos 50 pagos reales no requieren segunda consulta al historial, medido en 2 semanas de operación asistida.",
+      "experiment": "Mago de Oz / Concierge: instrumentar el módulo real para que muestre el desglose de distribución y medir cuántas veces el operador abre después el historial del préstamo; comparar contra la línea base actual (operador sin desglose visible).",
+      "decision": "Si pasa el umbral (≥ 80%) → perseverar y construir el módulo completo sobre esa base. Si falla (< 60%) → pivotar: revisar qué información del desglose sigue faltando o sobrando; probablemente la distribución no es el dolor real y habría que entrevistar de nuevo al operador. Si queda entre 60% y 80% → iterar sobre el formato del desglose antes de comprometer más desarrollo.",
+      "risk": "alto",
+      "time_box": "2 semanas de operación asistida con instrumentación",
+      "cost_box": "Instrumentación + tiempo de un observador (~8 horas/semana)",
+      "source": "operador.md · analista-qa.md"
+    },
+    {
+      "id": "H-02",
+      "assumption": "Si el cliente recibe al instante un comprobante con el efecto del pago sobre su deuda, entonces dejan de llegar reclamos por 'pago no reflejado'.",
+      "hypothesis": "Creemos que el Cliente del préstamo dejará de reclamar por pagos 'no reflejados' si ve en el momento un comprobante con monto aplicado, cuotas cubiertas y saldo pendiente actualizado, porque el dolor declarado es la incertidumbre sobre si el pago quedó bien registrado.",
+      "metric": "Tasa de reclamos por 'pago no reflejado' en los 7 días posteriores al pago (canal: call center + WhatsApp + presencial), normalizada por cada 100 pagos registrados.",
+      "threshold": "Reducción ≥ 50% respecto a la línea base medida en el mes previo al MVP, sostenida durante 4 semanas consecutivas.",
+      "experiment": "Fake door + smoke test: publicar en la app/web del cliente una pantalla de 'comprobante de pago' (incluso alimentada a mano al inicio con datos reales capturados por el operador) y medir cuántos clientes la consultan; comparar la tasa de reclamos antes y después de habilitarla.",
+      "decision": "Si pasa el umbral (≥ 50% de reducción) → construir el comprobante automático dentro del MVP. Si falla (< 25% de reducción) → pivotar: el dolor real podría no ser la falta de comprobante sino la demora de actualización; experimentar con notificación push inmediata en lugar de pantalla estática. Si queda entre 25% y 50% → iterar el formato del comprobante y volver a medir.",
+      "risk": "alto",
+      "time_box": "4 semanas de medición tras habilitar el comprobante",
+      "cost_box": "Una pantalla estática (1 sprint) + tiempo de un agente de call center para clasificar reclamos (~4 horas/semana)",
+      "source": "cliente.md"
+    },
+    {
+      "id": "H-03",
+      "assumption": "Si el supervisor puede reconstruir cualquier movimiento (quién, cuándo, qué cuotas, con qué montos, si fue reversado) desde el propio sistema, entonces resuelve las inconsistencias sin pedir reportes externos.",
+      "hypothesis": "Creemos que el Supervisor de pagos reducirá el tiempo medio de investigación de inconsistencias si accede desde el sistema al historial auditable completo del pago, porque hoy debe cruzar fuentes para reconstruir lo ocurrido.",
+      "metric": "Tiempo medio (en minutos) desde que se abre un caso de inconsistencia hasta que el supervisor identifica la causa raíz.",
+      "threshold": "Reducción ≥ 40% respecto a la línea base, en al menos 10 casos reales investigados durante 4 semanas.",
+      "experiment": "Concierge: dar al supervisor una vista 'wizard' que reconstruye el movimiento a partir de los logs reales (sin nuevo desarrollo), medir tiempos reales y compararlos con su flujo actual; al final, entrevistarlo sobre la información que faltó o sobró.",
+      "decision": "Si pasa el umbral (≥ 40% de reducción) → construir la vista de trazabilidad dentro del MVP. Si falla (< 20% de reducción) → pivotar: el cuello de botella puede estar en otra capa (conciliación contable), no en la trazabilidad del sistema; abrir discovery específico. Si queda entre 20% y 40% → iterar qué campos del historial se exponen y volver a medir.",
+      "risk": "medio",
+      "time_box": "4 semanas de operación asistida con vista concierge",
+      "cost_box": "Construcción de la vista concierge (~1 sprint) + tiempo del supervisor (~3 horas/semana)",
+      "source": "supervisor.md · coordinador-proyectos.md"
+    },
+    {
+      "id": "H-04",
+      "assumption": "Si el sistema bloquea pagos en préstamos cancelados, previene duplicados por reintento/concurrencia y permite reverso con motivo, entonces se elimina la clase de defectos que el QA viene reportando.",
+      "hypothesis": "Creemos que el Especialista QA dejará de reportar defectos por pagos duplicados, pagos sobre préstamos cancelados y errores sin reversa posible si el sistema aplica blindajes en esos tres puntos, porque son los escenarios donde históricamente más se han colado errores.",
+      "metric": "Número de defectos abiertos en QA por esos tres escenarios (pagos sobre cancelado, duplicados, errores sin reversa posible) en un ciclo de liberación.",
+      "threshold": "0 defectos críticos y ≤ 2 defectos menores por escenario, sostenidos durante 3 ciclos consecutivos de liberación.",
+      "experiment": "Prototipo evolutivo: implementar los tres blindajes como capa fina sobre el módulo actual y correr la suite de QA más un set de pruebas de caos (doble clic, dos sesiones simultáneas, intento sobre cancelado) durante los siguientes 3 ciclos de liberación.",
+      "decision": "Si pasa el umbral (0 críticos, ≤ 2 menores por escenario en 3 ciclos) → promover los blindajes a parte estable del MVP. Si falla (≥ 1 crítico por escenario en 2 ciclos seguidos) → pivotar: revisar si los blindajes están en la capa equivocada (p. ej. solo en UI en lugar de en el dominio); considerar mover las reglas a una máquina de estados explícita del préstamo. Si queda entre ambos → endurecer las pruebas antes de promover.",
+      "risk": "medio",
+      "time_box": "3 ciclos de liberación (≈ 6–9 semanas)",
+      "cost_box": "Implementación de los 3 blindajes (~2 sprints) + tiempo de QA (~6 horas/semana)",
+      "source": "analista-qa.md"
+    },
+    {
+      "id": "H-05",
+      "assumption": "Si la suite mínima cubre los 7 escenarios que QA ya nombra (pago exacto, parcial, excedente, saldo a favor, reverso, múltiples cuotas vencidas, préstamo cancelado), entonces cada liberación queda validada en los puntos donde más han fallado históricamente.",
+      "hypothesis": "Creemos que el Especialista QA podrá validar cualquier cambio del módulo con confianza si la suite cubre, como mínimo, los siete escenarios críticos que ya conoce, porque son los casos donde la historia de defectos es más densa.",
+      "metric": "Porcentaje de ciclos de liberación en los que QA detecta un defecto nuevo (no regresión) en los 30 días posteriores al cambio.",
+      "threshold": "≤ 10% de ciclos con defectos nuevos post-liberación, medido en al menos 5 ciclos.",
+      "experiment": "Prototipo evolutivo: construir la suite mínima, correrla sobre los últimos 3 ciclos reales del módulo (replay) y comparar los defectos que habría atrapado con los que efectivamente llegaron a producción.",
+      "decision": "Si pasa el umbral (≤ 10% de ciclos con defectos nuevos) → la suite pasa a ser parte del gate de CI del MVP. Si falla (> 25%) → pivotar: la suite no está atacando los escenarios donde realmente se cuelan defectos; revisar con QA qué casos faltaron y reescribirla. Si queda entre ambos → ampliar la suite antes de cerrar.",
+      "risk": "bajo",
+      "time_box": "5 ciclos de liberación (≈ 10–15 semanas)",
+      "cost_box": "Construcción de la suite mínima (~1 sprint) + tiempo de QA (~4 horas/semana)",
+      "source": "analista-qa.md"
+    }
+  ]
+}

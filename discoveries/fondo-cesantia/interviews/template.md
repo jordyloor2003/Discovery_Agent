@@ -8,7 +8,7 @@ fecha: 2026-00-00
 
 # Entrevista - <rol del entrevistado>
 
-> Notas crudas de la conversación. Anonimiza: quita nombres de personas y 
+>Notas crudas de la conversación. Anonimiza: quita nombres de personas y 
 >empresas, datos sensibles y cifras confidenciales. El dolor de negocio se
 >conserva. Reemplaza esta plantilla popr entrevistas reales.
 
